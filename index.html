@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kata — klip moodboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext x='32' y='42' font-size='40' text-anchor='middle'%3E%F0%9F%90%8B%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/vendor/fonts.css">
+<style>
+  :root {
+    --abyss: #08131D;
+    --ice: #E6F1F5;
+    --muted: rgba(230, 241, 245, .60);
+    --faint: rgba(230, 241, 245, .38);
+    --ink: #B0D6F0;
+    --teal: #7FD6E8;
+    --ember: #E0913F;
+    --flame: #C4521F;
+    --sand: #C9B294;
+    --moss: #9DB894;
+    --hairline: rgba(176, 214, 240, .14);
+    --serif: 'Cormorant', 'Times New Roman', serif;
+    --sans: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    background-color: var(--abyss);
+    color: var(--ice);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: rgba(127, 214, 232, .28); }
+
+  img { max-width: 100%; display: block; }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-left: clamp(20px, 5vw, 60px);
+    padding-right: clamp(20px, 5vw, 60px);
+  }
+
+  section { padding: clamp(90px, 13vh, 150px) 0; position: relative; }
+
+  /* ---------- utility type ---------- */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .38em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  .eyebrow.warm { color: var(--ember); }
+  .eyebrow.sandy { color: var(--sand); }
+
+  .hw { filter: drop-shadow(0 3px 16px rgba(127, 214, 232, .22)); }
+
+  mark {
+    color: inherit;
+    background: linear-gradient(transparent 62%, rgba(127, 214, 232, .24) 62%);
+    padding: 0 .08em;
+  }
+  mark.ember {
+    background: linear-gradient(transparent 62%, rgba(224, 145, 63, .26) 62%);
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 24vh;
+    background: linear-gradient(transparent, rgba(9, 21, 32, .9));
+    pointer-events: none;
+    z-index: 1;
+  }
+  .hero .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center;
+    gap: clamp(24px, 5vw, 80px);
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-title-img {
+    width: clamp(290px, 44vw, 620px);
+    height: auto;
+    margin: 26px 0 30px;
+  }
+  .hero-sub {
+    font-family: var(--serif);
+    font-size: clamp(20px, 2.3vw, 27px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 30em;
+  }
+  .hero-sub em { color: var(--teal); font-style: italic; }
+  .hero-sub em.warm { color: var(--ember); }
+  .whale {
+    width: clamp(220px, 30vw, 430px);
+    margin: 0 auto;
+    will-change: transform;
+  }
+  .caustic {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .caustic.a {
+    width: 55vw; height: 55vw;
+    right: -12vw; bottom: -22vw;
+    background: radial-gradient(circle, rgba(28, 90, 118, .55), transparent 65%);
+    animation: drift-a 21s ease-in-out infinite alternate;
+  }
+  .caustic.b {
+    width: 38vw; height: 38vw;
+    left: -10vw; top: -12vw;
+    background: radial-gradient(circle, rgba(18, 56, 84, .6), transparent 65%);
+    animation: drift-b 27s ease-in-out infinite alternate;
+  }
+  @keyframes drift-a {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(-6vw, -4vw) scale(1.15); }
+  }
+  @keyframes drift-b {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(4vw, 5vw) scale(1.1); }
+  }
+  .scroll-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 34px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    z-index: 2;
+    color: var(--faint);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+  }
+  .scroll-hint::after {
+    content: "";
+    width: 1px;
+    height: 46px;
+    background: linear-gradient(var(--ink), transparent);
+    opacity: .55;
+  }
+
+  /* ---------- téma ---------- */
+  .tema-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: clamp(32px, 6vw, 90px);
+  }
+  .tema-rail { position: relative; }
+  .tema-rail .sticky { position: sticky; top: 18vh; }
+  .hw-tema { width: clamp(150px, 14vw, 205px); margin-top: 18px; }
+  .rail-note {
+    margin-top: 22px;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--faint);
+    max-width: 22em;
+  }
+  .tema-body p {
+    font-size: clamp(17px, 1.55vw, 19.5px);
+    line-height: 1.9;
+    color: rgba(230, 241, 245, .88);
+    max-width: 36em;
+  }
+  .tema-body p + p { margin-top: 1.9em; }
+
+  /* ---------- elemek / képi világ ---------- */
+  .vilag-head { text-align: center; margin-bottom: clamp(50px, 9vh, 110px); }
+  .hw-szinek {
+    width: clamp(280px, 38vw, 520px);
+    margin: 26px auto 0;
+  }
+  .vilag-intro {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(19px, 2vw, 25px);
+    color: var(--muted);
+    max-width: 30em;
+    margin: 34px auto 0;
+    line-height: 1.65;
+  }
+
+  .chapter { padding: clamp(56px, 9vh, 110px) 0; position: relative; }
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(30px, 5vw, 70px);
+    align-items: center;
+  }
+  .chapter-grid.flip .ch-text { order: 2; }
+  .chapter-grid.flip .ch-media { order: 1; }
+
+  .ch-word {
+    font-family: var(--serif);
+    font-weight: 350;
+    font-size: clamp(66px, 9.5vw, 138px);
+    line-height: .95;
+    letter-spacing: .03em;
+    margin: 10px 0 22px;
+  }
+  #fold .ch-word { color: var(--moss); }
+  #szel .ch-word { color: var(--sand); }
+  #tuz  .ch-word { color: var(--ember); }
+  #viz  .ch-word { color: var(--teal); }
+
+  .ch-def {
+    font-size: clamp(15.5px, 1.35vw, 17.5px);
+    line-height: 1.85;
+    color: rgba(230, 241, 245, .82);
+    max-width: 30em;
+  }
+  .ch-def strong { font-weight: 600; color: var(--ice); }
+
+  .ch-media { display: grid; gap: 14px; }
+  .ph {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    box-shadow: 0 18px 46px rgba(2, 8, 14, .55);
+  }
+  .ph::after {
+    content: "";
+    position: absolute; inset: 0;
+    border: 1px solid rgba(176, 214, 240, .1);
+    border-radius: 5px;
+    pointer-events: none;
+  }
+  .ph img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    will-change: transform;
+  }
+  .plx { /* parallax inner image gets extra height via JS-driven yPercent */ }
+
+  .media-fold { grid-template-columns: repeat(2, 1fr); }
+  .media-fold .ph { aspect-ratio: 221 / 290; }
+  .media-szel { grid-template-columns: 1fr 1.35fr; align-items: start; }
+  .media-szel .ph.tall { aspect-ratio: 221 / 310; grid-row: span 2; }
+  .media-szel .ph.wide { aspect-ratio: 350 / 265; }
+  .media-viz  { grid-template-columns: repeat(2, 1fr); }
+  .media-viz .ph { aspect-ratio: 350 / 300; }
+
+  .media-tuz { justify-items: center; }
+  .media-tuz .ph {
+    aspect-ratio: 223 / 300;
+    width: min(390px, 78%);
+  }
+  .tuz-glow {
+    position: absolute;
+    inset: -8% -20%;
+    background: radial-gradient(closest-side, rgba(196, 82, 31, .22), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  #tuz { overflow: hidden; }
+  #tuz .chapter-grid { position: relative; z-index: 1; }
+  #embers {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: .75;
+  }
+
+  .ph-cap {
+    margin-top: 9px;
+    font-size: 11.5px;
+    letter-spacing: .06em;
+    color: var(--faint);
+  }
+
+  .margin-note {
+    position: absolute;
+    right: clamp(6px, 1.6vw, 28px);
+    top: 16%;
+    width: clamp(38px, 3.4vw, 52px);
+    opacity: .8;
+    pointer-events: none;
+  }
+
+  .vilag-close {
+    max-width: 34em;
+    margin: clamp(50px, 9vh, 100px) auto 0;
+    text-align: center;
+    font-size: clamp(16px, 1.5vw, 18.5px);
+    line-height: 1.9;
+    color: rgba(230, 241, 245, .85);
+  }
+  .vilag-close .calm {
+    display: block;
+    margin-top: 2em;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(19px, 2vw, 24px);
+    color: var(--teal);
+  }
+
+  /* ---------- bridge quote ---------- */
+  .bridge { text-align: center; }
+  .bridge .rule {
+    width: 54px; height: 1px;
+    background: var(--hairline);
+    margin: 0 auto;
+  }
+  .bridge blockquote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(22px, 2.7vw, 32px);
+    line-height: 1.55;
+    max-width: 26em;
+    margin: clamp(30px, 5vh, 48px) auto;
+    color: rgba(230, 241, 245, .9);
+  }
+  .bridge blockquote em { color: var(--ember); font-style: italic; }
+
+  /* ---------- galleries ---------- */
+  .gal-head { margin-bottom: clamp(40px, 7vh, 80px); }
+  .hw-ruha { width: clamp(180px, 20vw, 280px); margin-top: 20px; }
+  .hw-glitter { width: clamp(230px, 26vw, 360px); margin-top: 20px; }
+  .gal-lead {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 34em;
+    line-height: 1.85;
+  }
+
+  .masonry {
+    columns: 3;
+    column-gap: 22px;
+  }
+  .masonry figure {
+    break-inside: avoid;
+    margin: 0 0 30px;
+  }
+  .masonry .im {
+    overflow: hidden;
+    border-radius: 5px;
+    position: relative;
+    box-shadow: 0 18px 46px rgba(2, 8, 14, .5);
+  }
+  .masonry .im::after {
+    content: "";
+    position: absolute; inset: 0;
+    border: 1px solid rgba(176, 214, 240, .1);
+    border-radius: 5px;
+    pointer-events: none;
+  }
+  .masonry img {
+    transition: transform .8s cubic-bezier(.22, .61, .36, 1);
+  }
+  .masonry figure:hover img { transform: scale(1.035); }
+  .masonry figcaption {
+    margin-top: 10px;
+    font-size: 11.5px;
+    letter-spacing: .06em;
+    color: var(--faint);
+  }
+  #kieg .masonry figcaption { color: rgba(201, 178, 148, .62); }
+  #kieg .eyebrow { color: var(--sand); }
+
+  /* ---------- eszközök ---------- */
+  #eszkoz { text-align: center; }
+  .hw-eszkoz {
+    width: clamp(300px, 42vw, 560px);
+    margin: 26px auto 0;
+    opacity: .95;
+  }
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 4vw, 50px);
+    max-width: 880px;
+    margin: clamp(50px, 8vh, 90px) auto 0;
+    list-style: none;
+  }
+  .tool {
+    padding: 34px 20px 30px;
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+  }
+  .tool svg {
+    width: 40px; height: 40px;
+    margin: 0 auto 18px;
+    display: block;
+    stroke: var(--ink);
+    fill: none;
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .9;
+  }
+  .tool-name {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: .02em;
+  }
+  .tool-use {
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--faint);
+    letter-spacing: .04em;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    padding: clamp(70px, 11vh, 120px) 0 46px;
+    text-align: center;
+  }
+  footer .whale-mini {
+    width: 84px;
+    margin: 0 auto 26px;
+    opacity: .8;
+  }
+  footer .line {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--muted);
+  }
+  footer .fine {
+    margin-top: 10px;
+    font-size: 11px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* ---------- reveal default ---------- */
+  [data-reveal] { visibility: hidden; }
+  .no-motion [data-reveal] { visibility: visible; }
+
+  :focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .margin-note { display: none; }
+  }
+  @media (max-width: 900px) {
+    .hero .wrap { grid-template-columns: 1fr; text-align: center; }
+    .hero-title-img { margin-left: auto; margin-right: auto; width: min(520px, 82vw); }
+    .hero-sub { margin: 0 auto; }
+    .whale { width: clamp(190px, 44vw, 300px); margin-top: 8px; }
+    .tema-grid { grid-template-columns: 1fr; }
+    .tema-rail .sticky { position: static; }
+    .chapter-grid { grid-template-columns: 1fr; }
+    .chapter-grid.flip .ch-text { order: 1; }
+    .chapter-grid.flip .ch-media { order: 2; }
+    .masonry { columns: 2; }
+    .tools { grid-template-columns: 1fr; max-width: 420px; }
+  }
+  @media (max-width: 560px) {
+    .masonry { columns: 1; }
+    .media-fold { grid-template-columns: repeat(2, 1fr); }
+    .media-szel { grid-template-columns: 1fr 1fr; }
+    .media-viz { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .caustic.a, .caustic.b { animation: none; }
+    .masonry img { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero">
+  <div class="caustic a"></div>
+  <div class="caustic b"></div>
+  <div class="wrap">
+    <div class="hero-text">
+      <p class="eyebrow" data-hero>Klipkoncepció · Moodboard · 2026</p>
+      <h1>
+        <img class="hero-title-img hw" src="assets/final/hw_title.png"
+             alt="Kata klip ötletek — kézzel írt cím" data-hero>
+      </h1>
+      <p class="hero-sub" data-hero>
+        Egy <em class="warm">toxikus vonzás</em> és a <em>megtisztulás</em> története —
+        a négy őselem nyelvén elmesélve.
+      </p>
+    </div>
+    <img class="whale" src="assets/final/whale_tail.png"
+         alt="Kék bálnafarok, vízcseppekre hullva szét" data-hero>
+  </div>
+  <div class="scroll-hint" data-hero>görgess</div>
+</header>
+
+<main>
+
+<!-- ═══════════════ TÉMA ═══════════════ -->
+<section id="tema">
+  <div class="wrap tema-grid">
+    <div class="tema-rail">
+      <div class="sticky">
+        <p class="eyebrow" data-reveal>A klip témája</p>
+        <img class="hw-tema hw" src="assets/final/hw_tema.png"
+             alt="TÉMA: — kézírással" data-reveal>
+        <p class="rail-note" data-reveal>
+          Két világ vívódása: a parázs húz vissza,<br>a víz enged tovább.
+        </p>
+      </div>
+    </div>
+    <div class="tema-body">
+      <p data-reveal>
+        A klip központi témája egy toxikus, nárcisztikus dinamikájú kapcsolat,
+        amelyből a főszereplő próbál kiszakadni. A történet nem egy konkrét
+        szakításról szól, hanem arról a belső harcról, amikor egyszerre vonz a
+        <mark class="ember">régi, szenvedélyes, de romboló kapcsolat</mark>,
+        miközben megjelenik egy másik út is: egy
+        <mark>nyugodtabb, biztonságosabb, szeretetteljesebb kapcsolódás
+        lehetősége</mark>. A klip ezt a két világ közötti vívódást szeretné
+        szimbolikusan megmutatni.
+      </p>
+      <p data-reveal>
+        A klip összességében <mark>művészi, filmszerű és szimbolikus</mark>
+        legyen, ugyanakkor legyen benne egy
+        <mark class="ember">érzéki, szexi energia</mark> is. Fontos, hogy ne egy
+        klasszikus narratív történetet meséljen el, hanem inkább érzéseket és
+        belső konfliktusokat közvetítsen vizuális eszközökkel.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ KÉPI VILÁG ═══════════════ -->
+<section id="vilag">
+  <img class="margin-note hw" src="assets/final/hw_note_elemek.png"
+       alt="Kézírásos jegyzet: Az elemek intenzitása a klip végére elcsendesedik">
+  <div class="wrap">
+    <div class="vilag-head">
+      <p class="eyebrow" data-reveal>Színek · Hangulat · Képi világ</p>
+      <img class="hw-szinek hw" src="assets/final/hw_szinek.png"
+           alt="Színek, hangulat, képi világ — kézírással" data-reveal>
+      <p class="vilag-intro" data-reveal>
+        A vizuális világot a négy őselem határozná meg, amelyek nem szó szerint,
+        hanem inkább hangulatként és szimbólumként jelennének meg:
+      </p>
+    </div>
+
+    <!-- FÖLD -->
+    <div class="chapter" id="fold">
+      <div class="chapter-grid">
+        <div class="ch-text">
+          <p class="eyebrow" style="color:var(--moss)" data-reveal>gyökerek · belső világ</p>
+          <h2 class="ch-word" data-reveal>Föld</h2>
+          <p class="ch-def" data-reveal>
+            <strong>Erdő, barlang, természetes textúrák.</strong> A gyökereket,
+            a belső világot és az önmagunkkal való kapcsolatot jelképezi.
+          </p>
+        </div>
+        <div class="ch-media media-fold">
+          <figure class="ph plx" data-reveal><img src="assets/final/elem_cave_blue.jpg" alt="Bioluminesz-kéken derengő barlangtó"></figure>
+          <figure class="ph plx" data-reveal><img src="assets/final/elem_cave_waterfall.jpg" alt="Vízesés hullik a barlang száján át"></figure>
+          <figure class="ph plx" data-reveal><img src="assets/final/elem_cave_arch.jpg" alt="Napfényes sziklaív, mögötte zöld völgy"></figure>
+          <figure class="ph plx" data-reveal><img src="assets/final/elem_forest_cave.jpg" alt="Mohos barlangnyílás az erdő mélyén"></figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- SZÉL -->
+    <div class="chapter" id="szel">
+      <div class="chapter-grid flip">
+        <div class="ch-text">
+          <p class="eyebrow sandy" data-reveal>változás · elengedés</p>
+          <h2 class="ch-word" data-reveal>Szél</h2>
+          <p class="ch-def" data-reveal>
+            A <strong>változás, az elengedés és az átalakulás</strong> szimbóluma.
+            Egy láthatatlan erő, ami folyamatosan mozgásban tartja a történetet.
+          </p>
+        </div>
+        <div class="ch-media media-szel">
+          <figure class="ph plx tall" data-reveal><img src="assets/final/elem_wind_spiral.jpg" alt="Porspirál csavarodik a felhők közé"></figure>
+          <figure class="ph plx wide" data-reveal><img src="assets/final/elem_dust_storm.jpg" alt="Porvihar söpör végig a homokdűnén"></figure>
+          <figure class="ph plx wide" data-reveal><img src="assets/final/elem_wind_fabric.jpg" alt="Alak fut a mezőn, fehér fátyol lobog a szélben"></figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- TŰZ -->
+    <div class="chapter" id="tuz">
+      <canvas id="embers" aria-hidden="true"></canvas>
+      <div class="tuz-glow" aria-hidden="true"></div>
+      <div class="chapter-grid">
+        <div class="ch-text">
+          <p class="eyebrow warm" data-reveal>szenvedély · kísértés</p>
+          <h2 class="ch-word" data-reveal>Tűz</h2>
+          <p class="ch-def" data-reveal>
+            A <strong>szenvedély, a kísértés és a toxikus vonzás</strong>
+            megtestesítője. Egyszerre gyönyörű és pusztító.
+          </p>
+        </div>
+        <div class="ch-media media-tuz">
+          <figure class="ph plx" data-reveal><img src="assets/final/elem_fire.jpg" alt="Magasra csapó máglya a sötétben"></figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- VÍZ -->
+    <div class="chapter" id="viz">
+      <div class="chapter-grid flip">
+        <div class="ch-text">
+          <p class="eyebrow" data-reveal>megtisztulás · újjászületés</p>
+          <h2 class="ch-word" data-reveal>Víz</h2>
+          <p class="ch-def" data-reveal>
+            A <strong>megtisztulás, az érzelmek és az újjászületés</strong> szimbóluma.
+          </p>
+        </div>
+        <div class="ch-media media-viz">
+          <figure class="ph plx" data-reveal><img src="assets/final/elem_sea_storm_1.jpg" alt="Sötét, viharos tenger ólomszürke ég alatt"></figure>
+          <figure class="ph plx" data-reveal><img src="assets/final/elem_sea_storm_2.jpg" alt="Türkizzöld hullámok tajtékos taraja"></figure>
+        </div>
+      </div>
+    </div>
+
+    <p class="vilag-close" data-reveal>
+      A cél nem az, hogy az elemeket szó szerint mutassuk meg, hanem hogy ezek
+      <mark>inspirálják a helyszíneket, a fényeket, a mozgást és az
+      összhatást</mark>.
+      <span class="calm">Az elemek intenzitása a klip végére elcsendesedik.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════ KOREOGRÁFIA HÍD ═══════════════ -->
+<section class="bridge">
+  <div class="wrap">
+    <div class="rule" data-reveal></div>
+    <blockquote data-reveal>
+      A koreográfiában <em>két táncos</em> is szerepelne, akik a vizuális világ
+      természetes részei lennének, tovább erősítve az érzelmi feszültséget és a
+      klip művészi hangulatát.
+    </blockquote>
+    <div class="rule" data-reveal></div>
+  </div>
+</section>
+
+<!-- ═══════════════ RUHA ÖTLETEK ═══════════════ -->
+<section id="ruha">
+  <div class="wrap">
+    <div class="gal-head">
+      <p class="eyebrow" data-reveal>Styling · a víz világa</p>
+      <img class="hw-ruha hw" src="assets/final/hw_ruha.png"
+           alt="Ruha ötletek — kézírással" data-reveal>
+      <p class="gal-lead" data-reveal>
+        Áttetsző rétegek, láncok és flitter — a fény hordja a ruhát:
+        köd, víz és vaku rajzolja körbe az alakot.
+      </p>
+    </div>
+    <div class="masonry">
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_teal_goddess.jpg" alt="Fehér, magasan sliccelt ruha türkiz ködfényben, ezüst fejdísszel"></div>
+        <figcaption>türkiz köd · ezüst fejdísz · sliccelt fátyol</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_white_lace.jpg" alt="Roncsolt fehér csipkeruha éjszakai medence előtt"></div>
+        <figcaption>roncsolt csipke · éjszakai medence</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_chainmail.jpg" alt="Ezüst láncszövet top áttetsző, uszályos szoknyával"></div>
+        <figcaption>láncszövet top · áttetsző uszály</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_green_chains.jpg" alt="Smaragdzöld drapériaruha ezüst láncokkal"></div>
+        <figcaption>smaragd drapéria · láncsorok</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_pool_caustics.jpg" alt="Fekvő alak, bőrén vízfény-kausztika hullámzik"></div>
+        <figcaption>vízfény a bőrön · vetített kausztika</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_blue_sequin.jpg" alt="Kék flitteres, horgolt miniruha vakuvillanásban"></div>
+        <figcaption>kék flitter · parti villanás</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ KIEGÉSZÍTŐK ═══════════════ -->
+<section id="kieg">
+  <div class="wrap">
+    <div class="gal-head">
+      <p class="eyebrow" data-reveal>Kiegészítők · a föld melege</p>
+      <img class="hw-glitter hw" src="assets/final/hw_body_glitter.png"
+           alt="body glitter, ezüst és arany kiegészítők — kézírással" data-reveal>
+      <p class="gal-lead" data-reveal>
+        Body glitter, ezüst és arany kiegészítők — csillámló bőr,
+        gyöngy és lánc a föld-tónusú textilekhez.
+      </p>
+    </div>
+    <div class="masonry">
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_gold_mesh_veil.jpg" alt="Aranyháló fejdísz hosszú fonatokkal, esti partifényben"></div>
+        <figcaption>arany hálófátyol · gyöngyfonatok</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_earth_tattered.jpg" alt="Föld-tónusú, rongyolt rétegruha a tengerparton"></div>
+        <figcaption>föld-tónusú rongyolt rétegek</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_jewel_face.jpg" alt="Ékköves homlokdísz és csillámos szemsmink közeli portrén"></div>
+        <figcaption>ékköves homlokdísz · glitter smink</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/acc_gold_runway.jpg" alt="Arany flitteres, földig érő estélyi a kifutón"></div>
+        <figcaption>arany flitterzuhatag</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_chain_back.jpg" alt="Nyitott hátú ruha ezüst hátlánc-ékszerrel"></div>
+        <figcaption>hátlánc ékszer · nyitott hát</figcaption>
+      </figure>
+      <figure data-reveal>
+        <div class="im"><img src="assets/final/look_sand_boho.jpg" alt="Homok-bézs bohém szett flitteres derékkal"></div>
+        <figcaption>homok-bézs bohém szett</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ESZKÖZÖK ═══════════════ -->
+<section id="eszkoz">
+  <div class="wrap">
+    <p class="eyebrow" data-reveal>Technika a forgatásra</p>
+    <img class="hw-eszkoz hw" src="assets/final/hw_eszkoz.png"
+         alt="Eszköz ötletek: füstgép, vetítő (vízhez), szélgép/ventillátor — kézírással" data-reveal>
+    <ul class="tools">
+      <li class="tool" data-reveal>
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <path d="M8 32h24"/>
+          <path d="M12 26c-2-4 1-7 4-8 -1-4 2-8 6-8 4 0 7 3 6 8 3 1 6 4 4 8"/>
+          <path d="M14 15c0-3 2-5 5-5"/>
+        </svg>
+        <p class="tool-name">füstgép</p>
+        <p class="tool-use">köd és atmoszféra a fényeknek</p>
+      </li>
+      <li class="tool" data-reveal>
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <rect x="6" y="14" width="16" height="12" rx="2"/>
+          <circle cx="14" cy="20" r="3.4"/>
+          <path d="M22 17l12-6M22 20h12M22 23l12 6"/>
+        </svg>
+        <p class="tool-name">vetítő <span style="font-style:italic">(vízhez)</span></p>
+        <p class="tool-use">vízfény és kausztika a bőrre</p>
+      </li>
+      <li class="tool" data-reveal>
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <circle cx="20" cy="20" r="2.6"/>
+          <path d="M20 17.4c0-6 -8-7-8-2 0 3 5 4 8 2z"/>
+          <path d="M22.6 20c6 0 7-8 2-8 -3 0-4 5-2 8z"/>
+          <path d="M20 22.6c0 6 8 7 8 2 0-3-5-4-8-2z"/>
+          <path d="M17.4 20c-6 0-7 8-2 8 3 0 4-5 2-8z"/>
+        </svg>
+        <p class="tool-name">szélgép / ventillátor</p>
+        <p class="tool-use">mozgás a hajnak és a fátylaknak</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <img class="whale-mini" src="assets/final/whale_tail.png" alt="">
+  <p class="line">…és a végére minden elcsendesedik.</p>
+  <p class="fine">Kata klip ötletek · moodboard · 2026 július</p>
+</footer>
+
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script>
+(function () {
+  const prm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prm || !window.gsap) {
+    document.documentElement.classList.add('no-motion');
+    document.body.classList.add('no-motion');
+    document.querySelectorAll('[data-hero]').forEach(el => el.style.visibility = 'visible');
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ---- hero entrance ---- */
+  gsap.set('[data-hero]', { visibility: 'visible' });
+  gsap.from('[data-hero]', {
+    y: 30, autoAlpha: 0, duration: 1.25, ease: 'power3.out',
+    stagger: 0.14, delay: 0.15
+  });
+
+  /* ---- whale float ---- */
+  gsap.to('.whale', {
+    y: -16, rotation: 1.2, duration: 5.2,
+    ease: 'sine.inOut', yoyo: true, repeat: -1
+  });
+
+  /* ---- scroll reveals ---- */
+  gsap.utils.toArray('[data-reveal]').forEach(el => {
+    gsap.fromTo(el,
+      { y: 34, autoAlpha: 0 },
+      {
+        y: 0, autoAlpha: 1, duration: 1.05, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%' }
+      });
+  });
+
+  /* ---- the quieting arc: background grade per chapter ---- */
+  const grades = [
+    ['#tema',   '#0B1826'],
+    ['#fold',   '#0E1A15'],
+    ['#szel',   '#181A14'],
+    ['#tuz',    '#1F130C'],
+    ['#viz',    '#07202B'],
+    ['.bridge', '#0A1B26'],
+    ['#ruha',   '#0C1722'],
+    ['#kieg',   '#1B150E'],
+    ['#eszkoz', '#0A141C'],
+    ['footer',  '#060D12']
+  ];
+  let prevColor = '#08131D';
+  grades.forEach(([sel, color]) => {
+    gsap.fromTo('body',
+      { backgroundColor: prevColor },
+      {
+        backgroundColor: color, ease: 'none', immediateRender: false,
+        scrollTrigger: { trigger: sel, start: 'top 70%', end: 'top 20%', scrub: true }
+      });
+    prevColor = color;
+  });
+
+  /* ---- gentle parallax on chapter photos ---- */
+  gsap.utils.toArray('.plx img').forEach(img => {
+    gsap.fromTo(img,
+      { yPercent: -6, scale: 1.12 },
+      {
+        yPercent: 6, scale: 1.12, ease: 'none',
+        scrollTrigger: {
+          trigger: img.closest('.ph'),
+          start: 'top bottom', end: 'bottom top', scrub: true
+        }
+      });
+  });
+
+  /* ---- ember particles, only while Tűz is on screen ---- */
+  const canvas = document.getElementById('embers');
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0, raf = null;
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth * DPR;
+    H = canvas.height = canvas.offsetHeight * DPR;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function spawn() {
+    return {
+      x: Math.random() * W,
+      y: H + Math.random() * H * 0.4,
+      r: (Math.random() * 1.5 + 0.6) * DPR,
+      v: (Math.random() * 0.5 + 0.22) * DPR,
+      dx: (Math.random() - 0.5) * 0.3 * DPR,
+      tw: Math.random() * Math.PI * 2,
+      hue: Math.random() < 0.75 ? 28 : 16
+    };
+  }
+  const parts = Array.from({ length: 30 }, spawn);
+
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of parts) {
+      p.y -= p.v;
+      p.x += p.dx + Math.sin(p.tw += 0.02) * 0.18 * DPR;
+      if (p.y < -12) { Object.assign(p, spawn()); p.y = H + 12; }
+      const a = 0.10 + 0.22 * Math.abs(Math.sin(p.tw));
+      ctx.beginPath();
+      ctx.fillStyle = 'hsla(' + p.hue + ', 85%, 58%, ' + a + ')';
+      ctx.arc(p.x, p.y, p.r, 0, 7);
+      ctx.fill();
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  ScrollTrigger.create({
+    trigger: '#tuz',
+    start: 'top bottom',
+    end: 'bottom top',
+    onToggle(self) {
+      if (self.isActive) { if (!raf) { resize(); tick(); } }
+      else { cancelAnimationFrame(raf); raf = null; ctx.clearRect(0, 0, W, H); }
+    }
+  });
+})();
+</script>
+</body>
+</html>
